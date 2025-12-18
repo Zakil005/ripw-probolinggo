@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Lapor Desa | Buat Laporan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.15);
+            --border: rgba(255, 255, 255, 0.3);
+            --primary-green: #2d5a27;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .container-report {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            color: white;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+
+        .form-label { font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; color: #76ff03; }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border);
+            color: white !important;
+            border-radius: 12px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #1a2a1a !important;
+            box-shadow: none;
+        }
+
+        .btn-camera {
+    background: #ffc107;
+    border: none;
+    color: #ffffff;
+    padding: 12px;
+    border-radius: 12px;
+    width: 100%;
+    font-weight: 700;
+    margin-bottom: 20px;
+    transition: 0.3s;
+    /* Tambahkan dua baris ini untuk rata tengah */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+        .btn-submit {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+        .btn-nav:hover { background: white; color: black; }
+
+        .img-preview { width: 100%; border-radius: 15px; display: none; margin-bottom: 20px; border: 2px solid white; }
+    </style>
+</head>
+<body>
+
+<div class="container-report">
+    <h3 class="fw-bold text-center mb-1">FORM Sistem Informasi Pengaduan Warga</h3>
+    <p class="small opacity-75 text-center mb-4">Lengkapi data laporan dengan benar</p>
+
+    <form id="formLapor">
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Nama Pelapor</label>
+                <input type="text" id="nama" class="form-control" placeholder="Nama lengkap Anda" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Nomor HP/WhatsApp</label>
+                <input type="number" id="hp" class="form-control" placeholder="0812..." required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Jenis Laporan</label>
+                <select id="jenis" class="form-select" required>
+                    <option value="" disabled selected>Pilih Jenis...</option>
+                    <option value="Infrastruktur">Infrastruktur</option>
+                    <option value="Keamanan">Keamanan</option>
+                    <option value="Kebersihan">Kebersihan</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Tingkat Kerusakan</label>
+                <select id="tingkat" class="form-select" required>
+                    <option value="" disabled selected>Pilih Tingkat...</option>
+                    <option value="Parah">Parah</option>
+                    <option value="Sedang">Sedang</option>
+                    <option value="Biasa">Biasa</option>
+                </select>
+            </div>
+        </div>
+
+        <label class="form-label">Lokasi Kejadian</label>
+        <input type="text" id="lokasi" class="form-control" placeholder="Dusun / RT / RW / Nama Jalan" required>
+
+        <label class="form-label">Tanggal dan Waktu</label>
+        <input type="datetime-local" id="waktu" class="form-control" required>
+
+        <label class="form-label">Kronologi Singkat</label>
+        <textarea id="kronologi" class="form-control" rows="2" placeholder="Ceritakan urutan kejadian..." required></textarea>
+
+        <label class="form-label">Dampak Kerusakan</label>
+        <textarea id="dampak" class="form-control" rows="2" placeholder="Apa dampak yang dirasakan warga?" required></textarea>
+
+        <label class="form-label">Foto Bukti/Kamera</label>
+        <label for="foto" class="btn-camera">BUKA KAMERA SEKARANG</label>
+        <input type="file" id="foto" accept="image/*" capture="environment" class="d-none" required>
+        
+        <img id="imgPreview" class="img-preview">
+
+        <button type="submit" class="btn-submit">KIRIM LAPORAN SEKARANG</button>
+    </form>
+
+    <div class="d-flex gap-2 mt-4">
+        <a href="index.html" class="btn-nav">Kembali</a>
+        <a href="update.html" class="btn-nav">Lihat Update</a>
+    </div>
+</div>
+
+<script>
+    // Preview Kamera
+    document.getElementById('foto').onchange = function() {
+        const preview = document.getElementById('imgPreview');
+        const file = this.files[0];
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+    };
+
+    document.getElementById('formLapor').onsubmit = function(e) {
+        e.preventDefault();
+        
+        // Pastikan semua ID di bawah ini sesuai dengan ID di input HTML Anda
+        const data = {
+            id: 'LAP-' + Date.now(),
+            nama: document.getElementById('nama').value,
+            hp: document.getElementById('hp').value,
+            jenis: document.getElementById('jenis').value,
+            tingkat: document.getElementById('tingkat').value,
+            lokasi: document.getElementById('lokasi').value,
+            waktu_input: document.getElementById('waktu').value,
+            judul: document.getElementById('jenis').value + " - " + document.getElementById('lokasi').value,
+            status: 'Menunggu',
+            tanggal: new Date().toLocaleDateString('id-ID')
+        };
+
+        // Simpan ke LocalStorage
+        let db = JSON.parse(localStorage.getItem('database_laporan')) || [];
+        db.push(data);
+        localStorage.setItem('database_laporan', JSON.stringify(db));
+
+        alert('✅ Laporan Kamu Berhasil Terkirim!');
+        
+        this.reset();
+        document.getElementById('imgPreview').style.display = 'none';
+        
+        // Arahkan ke halaman update
+        window.location.href = 'update.html';
+    };
+</script>
+
+</body>
+</html>

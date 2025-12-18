@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPW | Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.12);
+            --border: rgba(255, 255, 255, 0.2);
+            --primary-green: #2d5a27;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; color: white; min-height: 100vh; margin: 0;
+        }
+
+        .sidebar {
+            background: rgba(45, 90, 39, 0.85); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border); height: 100vh; padding: 30px 20px;
+            position: fixed; width: 260px; z-index: 1000; display: flex; flex-direction: column; transition: 0.3s;
+        }
+
+        .main-content { margin-left: 260px; padding: 40px; transition: 0.3s; }
+
+        .stat-card, .table-container {
+            background: var(--glass); backdrop-filter: blur(15px);
+            border: 1px solid var(--border); border-radius: 20px; padding: 20px;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8); padding: 12px 20px; border-radius: 12px;
+            margin-bottom: 10px; text-decoration: none; display: flex; align-items: center;
+        }
+        .nav-link:hover, .nav-link.active { background: white; color: var(--primary-green) !important; font-weight: 600; }
+        
+        .logout-container { margin-top: auto; padding-top: 20px; }
+        .btn-logout {
+            width: 100%; background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545;
+            color: #ff6b6b; padding: 12px; border-radius: 12px; text-align: center; font-weight: 600; text-decoration: none; display: block;
+        }
+
+        .table { color: white !important; min-width: 900px; }
+
+        /* TOMBOL HAMBURGER DENGAN EFEK GULIR */
+        .btn-hamburger {
+            display: none; position: fixed; top: 20px; left: 20px; z-index: 1100;
+            background: var(--primary-green); color: white; border: none; 
+            padding: 12px 15px; border-radius: 10px; transition: all 0.3s ease;
+        }
+
+        /* Saat di-scroll (Class ini ditambahkan via JS) */
+        .btn-hamburger.scrolled {
+            top: 10px; left: 10px;
+            padding: 8px 12px;
+            background: rgba(45, 90, 39, 0.6);
+            backdrop-filter: blur(10px);
+            transform: scale(0.9);
+        }
+
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            
+            .btn-hamburger { 
+                display: block; 
+                top: 25px; 
+            }
+
+            .main-content { 
+                margin-left: 0; 
+                padding: 20px; 
+                padding-top: 25px; 
+            }
+
+            .header-text { 
+                text-align: right; 
+                margin-bottom: 30px !important;
+            }
+
+            .header-text h2 {
+                font-size: 1.6rem;
+                margin-bottom: 5px;
+                padding-left: 60px;
+            }
+
+            .header-text p {
+                font-size: 0.85rem;
+                padding-left: 60px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<button class="btn-hamburger shadow" id="hamburgerBtn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar" id="sidebar">
+    <h3 class="fw-bold mb-5 text-center text-success">SIP<span class="text-white">W</span></h3>
+    <nav>
+        <a href="#" class="nav-link active"><i class="fas fa-chart-pie me-3"></i> Ringkasan</a>
+        <a href="survei.html" class="nav-link"><i class="fas fa-user-shield me-3"></i> Petugas</a>
+        <a href="warga.html" class="nav-link"><i class="fas fa-users me-3"></i> Data Warga</a>
+    </nav>
+    <div class="logout-container">
+        <a href="index.html" class="btn-logout">KELUAR</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <header class="mb-5 header-text">
+        <h2 class="fw-bold">Dashboard Admin</h2>
+        <p class="opacity-75">Kelola laporan masyarakat dengan cepat dan tepat.</p>
+    </header>
+
+    <div class="row g-3 mb-4 text-center">
+        <div class="col-6 col-md">
+            <div class="stat-card">
+                <small class="opacity-75">Masuk</small>
+                <h4 class="fw-bold m-0" id="stat-masuk">0</h4>
+            </div>
+        </div>
+        <div class="col-6 col-md text-info">
+            <div class="stat-card">
+                <small class="opacity-75">Tahap Cek</small>
+                <h4 class="fw-bold m-0" id="stat-cek">0</h4>
+            </div>
+        </div>
+        <div class="col-6 col-md text-warning">
+            <div class="stat-card">
+                <small class="opacity-75">Menunggu</small>
+                <h4 class="fw-bold m-0" id="stat-tunggu">0</h4>
+            </div>
+        </div>
+        <div class="col-6 col-md text-primary">
+            <div class="stat-card">
+                <small class="opacity-75">Progres</small>
+                <h4 class="fw-bold m-0" id="stat-progres">0</h4>
+            </div>
+        </div>
+        <div class="col-12 col-md text-success">
+            <div class="stat-card">
+                <small class="opacity-75">Selesai</small>
+                <h4 class="fw-bold m-0" id="stat-selesai">0</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container shadow-lg">
+        <h5 class="fw-bold mb-4">Rekap Laporan SIPW</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr class="opacity-50 small">
+                        <th>PELAPOR</th>
+                        <th>NO HP</th>
+                        <th>LOKASI</th>
+                        <th>TINGKAT</th>
+                        <th>KERUSAKAN</th>
+                        <th>FOTO</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelAdmin">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // FUNGSI GULIR (SCROLL)
+    window.onscroll = function() {
+        const btn = document.getElementById("hamburgerBtn");
+        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+            btn.classList.add("scrolled");
+        } else {
+            btn.classList.remove("scrolled");
+        }
+    };
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    function muatDataAdmin() {
+        const db = JSON.parse(localStorage.getItem('database_laporan')) || [];
+        const tabel = document.getElementById('tabelAdmin');
+        tabel.innerHTML = '';
+
+        document.getElementById('stat-masuk').innerText = db.length;
+        document.getElementById('stat-cek').innerText = db.filter(x => x.status === 'Tahap Cek').length;
+        document.getElementById('stat-tunggu').innerText = db.filter(x => x.status === 'Menunggu').length;
+        document.getElementById('stat-progres').innerText = db.filter(x => x.status === 'Progres').length;
+        document.getElementById('stat-selesai').innerText = db.filter(x => x.status === 'Selesai').length;
+
+        if (db.length === 0) {
+            tabel.innerHTML = '<tr><td colspan="7" class="text-center opacity-50 py-4">Belum ada data laporan masuk.</td></tr>';
+            return;
+        }
+
+        db.reverse().forEach((l) => {
+            tabel.innerHTML += `
+                <tr>
+                    <td>${l.nama}</td>
+                    <td>${l.hp || '-'}</td>
+                    <td>${l.lokasi || '-'}</td>
+                    <td><span class="badge bg-danger">${l.tingkat || 'Biasa'}</span></td>
+                    <td>${l.judul || 'Laporan'}</td>
+                    <td><a href="#" class="text-info small text-decoration-none">Lihat Foto</a></td>
+                    <td><span class="badge ${getStatusClass(l.status)}">${l.status}</span></td>
+                </tr>
+            `;
+        });
+    }
+
+    function getStatusClass(s) {
+        if(s === 'Selesai') return 'bg-success';
+        if(s === 'Progres') return 'bg-primary';
+        if(s === 'Tahap Cek') return 'bg-info text-dark';
+        return 'bg-warning text-dark';
+    }
+
+    window.onload = muatDataAdmin;
+</script>
+</body>
+</html>
